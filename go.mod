@@ -3,7 +3,7 @@ module github.com/disperze/wasmx
 go 1.16
 
 require (
-	github.com/CosmWasm/wasmd v0.19.0
+	github.com/CosmWasm/wasmd v0.16.0
 	github.com/cosmos/cosmos-sdk v0.42.9
 	github.com/desmos-labs/juno v0.0.0-20210824062438-d6fbb0879808
 	github.com/jmoiron/sqlx v1.3.4
