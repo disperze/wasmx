@@ -5,19 +5,13 @@ import (
 	"github.com/disperze/wasmx/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	juno "github.com/desmos-labs/juno/types"
 )
 
-// Listen contracts by code
-const CodeID = 3
-
 // HandleMsg allows to handle the different utils related to the gov module
 func HandleMsg(
-	tx *juno.Tx, index int, msg sdk.Msg,
-	wasmClient wasmtypes.QueryClient,
-	cdc codec.Marshaler, db *database.Db,
+	tx *juno.Tx, index int, msg sdk.Msg, db *database.Db,
 ) error {
 	if len(tx.Logs) == 0 {
 		return nil
