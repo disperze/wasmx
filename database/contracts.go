@@ -4,7 +4,7 @@ import (
 	"github.com/disperze/wasmx/types"
 )
 
-// SaveContract allows to save the given reaction into the database.
+// SaveContract allows to save the given contract into the database.
 func (db Db) SaveContract(contract types.Contract) error {
 	stmt := `
 INSERT INTO contracts (code_id, address, creator, admin, label, creation_time, height) 
