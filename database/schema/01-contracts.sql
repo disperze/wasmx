@@ -8,3 +8,6 @@ CREATE TABLE contracts
     creation_time TEXT                        NOT NULL DEFAULT '',
     height        BIGINT                      NOT NULL
 );
+
+CREATE INDEX contracts_code_id_index ON contracts (code_id);
+CREATE INDEX contracts_creator_index ON contracts (creator);
