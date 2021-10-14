@@ -1,4 +1,5 @@
 # WasmX
+[![Go Report Card](https://goreportcard.com/badge/github.com/disperze/wasmx)](https://goreportcard.com/report/github.com/disperze/wasmx)
 
 This project represents the [Juno](https://github.com/desmos-labs/juno) implementation for
 the [x/wasm module](https://github.com/cosmwasm/wasmd).
