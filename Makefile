@@ -32,22 +32,6 @@ install: go.sum
 # Tests / CI
 ###############################################################################
 
-coverage:
-	@echo "Viewing test coverage..."
-	@go tool cover --html=coverage.out
-
-stop-docker-test:
-	@echo "Stopping Docker container..."
-	@docker stop wasmx-test-db || true && docker rm wasmx-test-db || true
-
-start-docker-test: stop-docker-test
-	@echo "Starting Docker container..."
-	@docker run --name wasmx-test-db -e POSTGRES_USER=wasmx -e POSTGRES_PASSWORD=password -e POSTGRES_DB=wasmx -d -p 5433:5432 postgres
-
-test-unit: start-docker-test
-	@echo "Executing unit tests..."
-	@go test -mod=readonly -v -coverprofile coverage.txt ./...
-
 lint:
 	golangci-lint run --out-format=tab
 
@@ -64,4 +48,4 @@ format:
 clean:
 	rm -f tools-stamp ./build/**
 
-.PHONY: install build ci-test ci-lint coverage clean start-docker-test
+.PHONY: install build ci-test ci-lint clean
