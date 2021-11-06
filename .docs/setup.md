@@ -24,7 +24,7 @@ $ wasmx version
 ```
 
 ## Initializing the configuration
-In order to correctly parse and store the data based on your requirements, WasmX allows you to customize its behavior via a TOML file called `config.toml`. In order to create the first instance of the `config.toml` file you can run
+In order to correctly parse and store the data based on your requirements, WasmX allows you to customize its behavior via a YAML file called `config.yaml`. In order to create the first instance of the `config.yaml` file you can run
 
 ```shell
 $ wasmx init
@@ -40,7 +40,7 @@ $ wasmx init --home /path/to/my/folder
 Once the file is created, you are required to edit it and change the different values. To do this you can run 
 
 ```shell
-$ nano ~/.wasmx/config.toml
+$ nano ~/.wasmx/config.yaml
 ```
 
 For a better understanding of what each section and field refers to, please read the [config reference](https://github.com/forbole/juno/blob/v2/cosmos-stargate/.docs/config.md). 
