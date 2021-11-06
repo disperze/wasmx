@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	junodb "github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/types/logging"
+	junodb "github.com/forbole/juno/v2/database"
+	"github.com/forbole/juno/v2/logging"
 
-	juno "github.com/desmos-labs/juno/types"
+	dbcfg "github.com/forbole/juno/v2/database/config"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
@@ -41,7 +41,7 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	encodingConfig := config.MakeEncodingConfig()
-	databaseConfig := juno.NewDatabaseConfig(
+	databaseConfig := dbcfg.NewDatabaseConfig(
 		"wasmx",
 		"localhost",
 		5433,

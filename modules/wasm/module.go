@@ -4,8 +4,8 @@ import (
 	"github.com/disperze/wasmx/database"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/desmos-labs/juno/modules"
-	juno "github.com/desmos-labs/juno/types"
+	"github.com/forbole/juno/v2/modules"
+	juno "github.com/forbole/juno/v2/types"
 )
 
 var (

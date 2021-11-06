@@ -3,11 +3,11 @@ package main
 import (
 	"log"
 
-	junocmd "github.com/desmos-labs/juno/cmd"
-	parsecmd "github.com/desmos-labs/juno/cmd/parse"
 	"github.com/disperze/wasmx/database"
 	"github.com/disperze/wasmx/modules"
 	"github.com/disperze/wasmx/types/config"
+	junocmd "github.com/forbole/juno/v2/cmd"
+	parsecmd "github.com/forbole/juno/v2/cmd/parse"
 )
 
 func main() {
