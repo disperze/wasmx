@@ -6,7 +6,7 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/desmos-labs/juno/types"
+	juno "github.com/forbole/juno/v2/types"
 )
 
 // HandleMsg allows to handle the different utils related to the gov module
@@ -28,7 +28,7 @@ func HandleMsg(
 }
 
 func handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode, db *database.Db) error {
-	event, err := tx.FindEventByType(index, sdk.EventTypeMessage)
+	event, err := tx.FindEventByType(index, wasmtypes.EventTypeStoreCode)
 	if err != nil {
 		return err
 	}
@@ -38,18 +38,18 @@ func handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode, db 
 		return err
 	}
 
-	code := types.NewCode(codeID, msg.Source, msg.Builder, msg.Sender, tx.Timestamp, tx.Height)
+	code := types.NewCode(codeID, msg.Sender, tx.Timestamp, tx.Height)
 
 	return db.SaveCode(code)
 }
 
 func handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract, db *database.Db) error {
-	event, err := tx.FindEventByType(index, sdk.EventTypeMessage)
+	event, err := tx.FindEventByType(index, wasmtypes.EventTypeInstantiate)
 	if err != nil {
 		return err
 	}
 
-	contractAddress, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyContract)
+	contractAddress, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyContractAddr)
 	if err != nil {
 		return err
 	}

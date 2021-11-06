@@ -3,9 +3,9 @@ package database
 import (
 	"fmt"
 
-	"github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/db/postgresql"
-	juno "github.com/desmos-labs/juno/types"
+	"github.com/forbole/juno/v2/database"
+	"github.com/forbole/juno/v2/database/postgresql"
+	juno "github.com/forbole/juno/v2/types"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -17,7 +17,7 @@ type Db struct {
 }
 
 // Cast casts the given database to be a *Db
-func Cast(database db.Database) *Db {
+func Cast(database database.Database) *Db {
 	wasmDb, ok := (database).(*Db)
 	if !ok {
 		panic(fmt.Errorf("database is not a WasmDB instance"))
@@ -26,7 +26,7 @@ func Cast(database db.Database) *Db {
 }
 
 // Builder allows to create a new Db instance implementing the database.Builder type
-func Builder(ctx *db.Context) (db.Database, error) {
+func Builder(ctx *database.Context) (database.Database, error) {
 	database, err := postgresql.Builder(ctx)
 	if err != nil {
 		return nil, err

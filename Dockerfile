@@ -1,25 +1,26 @@
-# To build the DJuno image, just run:
-# > docker build -t djuno .
+# To build the wasmx image, just run:
+# > docker build -t wasmx .
 #
 # In order to work properly, this Docker container needs to have a volume that:
 # - as source points to a directory which contains a config.toml and firebase-config.toml files
 # - as destination it points to the /home folder
 #
-# Simple usage with a mounted data directory (considering ~/.djuno/config as the configuration folder):
-# > docker run -it -v ~/.djuno/config:/home djuno djuno parse config.toml firebase-config.json
+# Simple usage with a mounted data directory (considering ~/.wasmx/config as the configuration folder):
+# > docker run -it -v ~/.wasmx/config:/home wasmx wasmx parse config.toml firebase-config.json
 #
 # If you want to run this container as a daemon, you can do so by executing
-# > docker run -td -v ~/.djuno/config:/home --name djuno djuno
+# > docker run -td -v ~/.wasmx/config:/home --name wasmx wasmx
 #
 # Once you have done so, you can enter the container shell by executing
-# > docker exec -it djuno bash
+# > docker exec -it wasmx bash
 #
 # To exit the bash, just execute
 # > exit
 FROM golang:alpine AS build-env
 
-# Set up dependencies
-ENV PACKAGES curl make git libc-dev bash gcc linux-headers eudev-dev py-pip
+# Install dependencies
+RUN apk update && \
+    apk add --no-cache curl make git libc-dev bash gcc linux-headers eudev-dev py-pip ca-certificates 
 
 # Set working directory for the build
 WORKDIR /wasmx
@@ -27,10 +28,12 @@ WORKDIR /wasmx
 # Add source files
 COPY . .
 
-# Install minimum necessary dependencies, build Cosmos SDK, remove packages
-RUN apk update
-RUN apk add --no-cache $PACKAGES && \
-    make install
+# See https://github.com/CosmWasm/wasmvm/releases
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v1.0.0-beta/libwasmvm_muslc.a /lib/libwasmvm_muslc.a
+RUN sha256sum /lib/libwasmvm_muslc.a | grep 2ea10ad5e489b5ede1aa4061d4afa8b2ddd39718ba7b8689690b9c07a41d678e
+
+# Build binary
+RUN make install
 
 # Final image
 FROM alpine:edge

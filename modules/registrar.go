@@ -1,11 +1,11 @@
 package modules
 
 import (
-	"github.com/desmos-labs/juno/modules/registrar"
 	"github.com/disperze/wasmx/database"
 	"github.com/disperze/wasmx/modules/wasm"
+	"github.com/forbole/juno/v2/modules/registrar"
 
-	junomod "github.com/desmos-labs/juno/modules"
+	junomod "github.com/forbole/juno/v2/modules"
 )
 
 // ModulesRegistrar represents the modules.Registrar that allows to register all custom modules

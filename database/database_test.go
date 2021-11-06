@@ -8,10 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	junodb "github.com/desmos-labs/juno/db"
-	"github.com/desmos-labs/juno/types/logging"
+	junodb "github.com/forbole/juno/v2/database"
+	"github.com/forbole/juno/v2/logging"
 
-	juno "github.com/desmos-labs/juno/types"
+	dbcfg "github.com/forbole/juno/v2/database/config"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 
@@ -41,7 +41,7 @@ func (suite *DbTestSuite) SetupTest() {
 
 	// Build the database
 	encodingConfig := config.MakeEncodingConfig()
-	databaseConfig := juno.NewDatabaseConfig(
+	databaseConfig := dbcfg.NewDatabaseConfig(
 		"wasmx",
 		"localhost",
 		5433,
@@ -60,11 +60,11 @@ func (suite *DbTestSuite) SetupTest() {
 	suite.Require().True(ok)
 
 	// Delete the public schema
-	_, err = desmosDb.Sql.Exec(fmt.Sprintf(`DROP SCHEMA %s CASCADE;`, databaseConfig.GetSchema()))
+	_, err = desmosDb.Sql.Exec(fmt.Sprintf(`DROP SCHEMA %s CASCADE;`, databaseConfig.Schema))
 	suite.Require().NoError(err)
 
 	// Re-create the schema
-	_, err = desmosDb.Sql.Exec(fmt.Sprintf(`CREATE SCHEMA %s;`, databaseConfig.GetSchema()))
+	_, err = desmosDb.Sql.Exec(fmt.Sprintf(`CREATE SCHEMA %s;`, databaseConfig.Schema))
 	suite.Require().NoError(err)
 
 	dirPath := "schema"

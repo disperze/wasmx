@@ -1,7 +1,7 @@
 # WasmX
 [![Go Report Card](https://goreportcard.com/badge/github.com/disperze/wasmx)](https://goreportcard.com/report/github.com/disperze/wasmx)
 
-This project represents the [Juno](https://github.com/desmos-labs/juno) implementation for
+This project represents the [Juno](https://github.com/forbole/juno) implementation for
 the [x/wasm module](https://github.com/cosmwasm/wasmd).
 
 It extends the custom Juno behavior with custom message handlers for wasm message. This allows to store
