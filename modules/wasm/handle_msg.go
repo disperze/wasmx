@@ -18,8 +18,6 @@ func HandleMsg(
 	}
 
 	switch cosmosMsg := msg.(type) {
-	case *wasmtypes.MsgStoreCode:
-		return handleMsgStoreCode(tx, index, cosmosMsg, db)
 	case *wasmtypes.MsgInstantiateContract:
 		return handleMsgInstantiateContract(tx, index, cosmosMsg, db)
 	case *wasmtypes.MsgExecuteContract:
@@ -27,22 +25,6 @@ func HandleMsg(
 	}
 
 	return nil
-}
-
-func handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode, db *database.Db) error {
-	event, err := tx.FindEventByType(index, wasmtypes.EventTypeStoreCode)
-	if err != nil {
-		return err
-	}
-
-	codeID, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyCodeID)
-	if err != nil {
-		return err
-	}
-
-	code := types.NewCode(codeID, msg.Sender, tx.Timestamp, tx.Height)
-
-	return db.SaveCode(code)
 }
 
 func handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract, db *database.Db) error {
