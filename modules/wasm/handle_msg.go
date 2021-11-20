@@ -22,6 +22,8 @@ func HandleMsg(
 		return handleMsgStoreCode(tx, index, cosmosMsg, db)
 	case *wasmtypes.MsgInstantiateContract:
 		return handleMsgInstantiateContract(tx, index, cosmosMsg, db)
+	case *wasmtypes.MsgExecuteContract:
+		return handleMsgExecuteContract(tx, index, cosmosMsg, db)
 	}
 
 	return nil
@@ -65,4 +67,24 @@ func handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInst
 	contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
 
 	return db.SaveContract(contract)
+}
+
+func handleMsgExecuteContract(tx *juno.Tx, index int, msg *wasmtypes.MsgExecuteContract, db *database.Db) error {
+	event, err := tx.FindEventByType(index, wasmtypes.EventTypeExecute)
+	if err != nil {
+		return err
+	}
+
+	contractAddress, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyContractAddr)
+	if err != nil {
+		return err
+	}
+
+	fee := tx.GetFee()
+	feeAmount := int64(0)
+	if fee.Len() == 1 {
+		feeAmount = fee[0].Amount.Int64()
+	}
+
+	return db.UpdateContractStats(contractAddress, tx.GasUsed, feeAmount)
 }

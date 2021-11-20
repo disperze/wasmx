@@ -1,13 +1,3 @@
-CREATE TABLE codes
-(
-    code_id       BIGINT                      NOT NULL UNIQUE PRIMARY KEY,
-    creator       TEXT                        NOT NULL DEFAULT '',
-    creation_time TEXT                        NOT NULL DEFAULT '',
-    height        BIGINT                      NOT NULL
-);
-
-CREATE INDEX codes_creator_index ON codes (creator);
-
 CREATE TABLE contracts
 (
     address       TEXT                        NOT NULL UNIQUE PRIMARY KEY,
@@ -16,6 +6,8 @@ CREATE TABLE contracts
     admin         TEXT                        NOT NULL DEFAULT '',
     label         TEXT                        NOT NULL DEFAULT '',
     creation_time TEXT                        NOT NULL DEFAULT '',
+    gas           BIGINT                      NOT NULL DEFAULT 0,
+    fees          BIGINT                      NOT NULL DEFAULT 0,
     height        BIGINT                      NOT NULL
 );
 
