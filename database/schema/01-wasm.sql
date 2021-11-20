@@ -6,6 +6,7 @@ CREATE TABLE contracts
     admin         TEXT                        NOT NULL DEFAULT '',
     label         TEXT                        NOT NULL DEFAULT '',
     creation_time TEXT                        NOT NULL DEFAULT '',
+    tx            BIGINT                      NOT NULL DEFAULT 0,
     gas           BIGINT                      NOT NULL DEFAULT 0,
     fees          BIGINT                      NOT NULL DEFAULT 0,
     height        BIGINT                      NOT NULL

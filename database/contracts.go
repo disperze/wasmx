@@ -14,9 +14,9 @@ VALUES ($1, $2, $3, $4, $5, $6, $7)`
 }
 
 // UpdateContractStats update stats by contract call.
-func (db Db) UpdateContractStats(contract string, gas int64, fees int64) error {
+func (db Db) UpdateContractStats(contract string, tx, gas, fees int64) error {
 	stmt := `
-UPDATE contracts SET gas=gas+$2, fees=fees+$3 WHERE address = $1`
-	_, err := db.Sql.Exec(stmt, contract, gas, fees)
+UPDATE contracts SET tx=tx+$2, gas=gas+$3, fees=fees+$4 WHERE address = $1`
+	_, err := db.Sql.Exec(stmt, contract, tx, gas, fees)
 	return err
 }

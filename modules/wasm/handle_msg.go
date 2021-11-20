@@ -86,5 +86,5 @@ func handleMsgExecuteContract(tx *juno.Tx, index int, msg *wasmtypes.MsgExecuteC
 		feeAmount = fee[0].Amount.Int64()
 	}
 
-	return db.UpdateContractStats(contractAddress, tx.GasUsed, feeAmount)
+	return db.UpdateContractStats(contractAddress, 1, tx.GasUsed, feeAmount)
 }
