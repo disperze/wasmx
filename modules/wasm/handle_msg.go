@@ -59,7 +59,9 @@ func handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInst
 		TxIndex:     uint64(index),
 	}
 
-	contractInfo := wasmtypes.NewContractInfo(msg.CodeID, sdk.AccAddress(msg.Sender), sdk.AccAddress(msg.Admin), msg.Label, createdAt)
+	creator, _ := sdk.AccAddressFromBech32(msg.Sender)
+	admin, _ := sdk.AccAddressFromBech32(msg.Admin)
+	contractInfo := wasmtypes.NewContractInfo(msg.CodeID, creator, admin, msg.Label, createdAt)
 	contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
 
 	return db.SaveContract(contract)
