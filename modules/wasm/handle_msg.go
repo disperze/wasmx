@@ -91,7 +91,7 @@ func (m *Module) handleMsgExecuteContract(tx *juno.Tx, index int, msg *wasmtypes
 		feeAmount = fee[0].Amount.Int64()
 	}
 
-	for i, contract := range contracts[1:] {
+	for i, contract := range contracts {
 		if i == 0 {
 			err = m.db.UpdateContractStats(contract, 1, tx.GasUsed, feeAmount)
 		} else {
