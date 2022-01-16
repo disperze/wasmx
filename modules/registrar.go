@@ -1,6 +1,8 @@
 package modules
 
 import (
+	"fmt"
+
 	"github.com/disperze/wasmx/database"
 	"github.com/disperze/wasmx/modules/wasm"
 	"github.com/forbole/juno/v2/modules/registrar"
@@ -21,9 +23,12 @@ func NewModulesRegistrar() *ModulesRegistrar {
 
 // BuildModules implements modules.Registrar
 func (r *ModulesRegistrar) BuildModules(ctx registrar.Context) junomod.Modules {
-	grpcCfg := ctx.JunoConfig.Node.Details.(*junoremote.Details)
+	remoteCfg, ok := ctx.JunoConfig.Node.Details.(*junoremote.Details)
+	if !ok {
+		panic(fmt.Errorf("invalid remote grpc config"))
+	}
 
-	grpcConnection, err := junoremote.CreateGrpcConnection(grpcCfg.GRPC)
+	grpcConnection, err := junoremote.CreateGrpcConnection(remoteCfg.GRPC)
 	if err != nil {
 		panic(err)
 	}
