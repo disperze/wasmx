@@ -9,7 +9,8 @@ CREATE TABLE contracts
     tx            BIGINT                      NOT NULL DEFAULT 0,
     gas           BIGINT                      NOT NULL DEFAULT 0,
     fees          BIGINT                      NOT NULL DEFAULT 0,
-    height        BIGINT                      NOT NULL
+    height        BIGINT                      NOT NULL,
+    ibc           BOOLEAN                     NOT NULL
 );
 
 CREATE INDEX contracts_code_id_index ON contracts (code_id);

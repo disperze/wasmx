@@ -59,7 +59,7 @@ func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmt
 		creator, _ := sdk.AccAddressFromBech32(response.Creator)
 		admin, _ := sdk.AccAddressFromBech32(response.Admin)
 		contractInfo := wasmtypes.NewContractInfo(response.CodeID, creator, admin, response.Label, createdAt)
-		contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
+		contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp, response.IBCPortID != "")
 
 		if i == 0 {
 			err = m.db.SaveContract(contract, tx.GasUsed, feeAmount)
