@@ -37,3 +37,5 @@ CREATE TABLE tokens
     decimals     TINYINT                     NOT NULL DEFAULT 0,
     supply       TEXT                        NOT NULL DEFAULT 0
 );
+
+ALTER TABLE tokens ADD CONSTRAINT fk_contract FOREIGN KEY (address) REFERENCES contracts (address);
