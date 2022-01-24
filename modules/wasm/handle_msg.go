@@ -40,8 +40,18 @@ func (m *Module) handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgSt
 	if err != nil {
 		return err
 	}
+
 	codeID, _ := strconv.Atoi(codeIDVal)
-	code := types.NewCode(uint64(codeID), msg.Sender, tx.Timestamp, tx.Height)
+	response, err := m.client.Code(context.Background(), &wasmtypes.QueryCodeRequest{
+		CodeId: uint64(codeID),
+	})
+	if err != nil {
+		return err
+	}
+
+	hash := response.CodeInfoResponse.DataHash.String()
+	size := len(response.Data)
+	code := types.NewCode(uint64(codeID), msg.Sender, hash, uint64(size), tx.Timestamp, tx.Height)
 
 	return m.db.SaveCode(code)
 }

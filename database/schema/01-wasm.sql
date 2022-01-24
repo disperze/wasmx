@@ -3,6 +3,8 @@ CREATE TABLE codes
     code_id       BIGINT                      NOT NULL UNIQUE PRIMARY KEY,
     creator       TEXT                        NOT NULL DEFAULT '',
     creation_time TEXT                        NOT NULL DEFAULT '',
+    hash          TEXT                        NOT NULL DEFAULT '',
+    size          BIGINT                      NOT NULL,
     version       TEXT                        NULL,
     height        BIGINT                      NOT NULL
 );
@@ -33,5 +35,5 @@ CREATE TABLE tokens
     name         TEXT                        NOT NULL DEFAULT '',
     symbol       TEXT                        NOT NULL DEFAULT '',
     decimals     TINYINT                     NOT NULL DEFAULT 0,
-    supply       BIGINT                      NOT NULL DEFAULT 0
+    supply       TEXT                        NOT NULL DEFAULT 0
 );

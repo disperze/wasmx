@@ -7,22 +7,22 @@ import (
 // SaveCode allows to save the given code into the database.
 func (db Db) SaveCode(code types.Code) error {
 	stmt := `
-INSERT INTO codes (code_id, creator, creation_time, height) 
-VALUES ($1, $2, $3, $4, $5, $6)`
-	_, err := db.Sql.Exec(stmt, code.CodeID, code.Creator, code.CreatedTime, code.Height)
+INSERT INTO codes (code_id, creator, hash, size, creation_time, height) 
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
+	_, err := db.Sql.Exec(stmt, code.CodeID, code.Creator, code.Hash, code.Size, code.CreatedTime, code.Height)
 	return err
 }
 
-// HasCode verify if code is registered.
-func (db Db) HasCode(id uint64) (bool, error) {
-	var count int
-	stmt := `SELECT COUNT(1) FROM codes WHERE code_id = $1`
+// HasCodeVersion verify if code has version.
+func (db Db) HasCodeVersion(id uint64) (bool, error) {
+	var version string
+	stmt := `SELECT version FROM codes WHERE code_id = $1`
 	row := db.Sql.QueryRow(stmt, id)
-	err := row.Scan(&count)
+	err := row.Scan(&version)
 	if err != nil {
 		return false, err
 	}
-	return count > 0, err
+	return version != "", err
 }
 
 // SetCodeVersion update code version.
