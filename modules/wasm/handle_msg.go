@@ -48,8 +48,9 @@ func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmt
 		feeAmount = fee[0].Amount.Int64()
 	}
 
+	ctx := context.Background()
 	for i, contractAddress := range contracts {
-		response, err := m.client.ContractInfo(context.Background(), &wasmtypes.QueryContractInfoRequest{
+		response, err := m.client.ContractInfo(ctx, &wasmtypes.QueryContractInfoRequest{
 			Address: contractAddress,
 		})
 		if err != nil {
