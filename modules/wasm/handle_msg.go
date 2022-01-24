@@ -3,6 +3,7 @@ package wasm
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/disperze/wasmx/types"
 
@@ -18,6 +19,8 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	switch cosmosMsg := msg.(type) {
+	case *wasmtypes.MsgStoreCode:
+		return m.handleMsgStoreCode(tx, index, cosmosMsg)
 	case *wasmtypes.MsgInstantiateContract:
 		return m.handleMsgInstantiateContract(tx, index, cosmosMsg)
 	case *wasmtypes.MsgExecuteContract:
@@ -25,6 +28,22 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	}
 
 	return nil
+}
+
+func (m *Module) handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode) error {
+	event, err := tx.FindEventByType(index, wasmtypes.EventTypeStoreCode)
+	if err != nil {
+		return err
+	}
+
+	codeIDVal, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyCodeID)
+	if err != nil {
+		return err
+	}
+	codeID, _ := strconv.Atoi(codeIDVal)
+	code := types.NewCode(uint64(codeID), msg.Sender, tx.Timestamp, tx.Height)
+
+	return m.db.SaveCode(code)
 }
 
 func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract) error {

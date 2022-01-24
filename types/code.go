@@ -2,7 +2,7 @@ package types
 
 // Code type
 type Code struct {
-	CodeID      string
+	CodeID      uint64
 	Creator     string
 	CreatedTime string
 	Height      int64
@@ -10,7 +10,7 @@ type Code struct {
 
 // NewCode instance
 func NewCode(
-	codeID string,
+	codeID uint64,
 	creator string,
 	createdTime string,
 	height int64,
