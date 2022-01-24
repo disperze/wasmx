@@ -10,3 +10,9 @@ which [GraphQL](https://graphql.org/) APIs can then be created using [Hasura](ht
 
 ## Usage
 To know how to setup and run wasmx, please refer to the [docs folder](.docs).
+
+## TODO
+
+- [] Save code and store contract_version, checksum
+- [] Save tokens info
+- [] Handle IBC Msg to get contract calls.
