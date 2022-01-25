@@ -62,13 +62,13 @@ $ wasmx parse --home /path/to/my/config/folder
 We highly suggest you running WasmX as a system service so that it can be restarted automatically in the case it stops. To do this you can run: 
 
 ```shell
-$ sudo tee /etc/systemd/system/wasmx.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/wasmx.service > /dev/null <<EOF
 [Unit]
 Description=WasmX parser
 After=network-online.target
 
 [Service]
-User=$USER
+User=root
 ExecStart=$GOPATH/bin/wasmx parse
 Restart=always
 RestartSec=3
@@ -82,6 +82,6 @@ EOF
 Then you need to enable and start the service:
 
 ```shell
-$ sudo systemctl enable wasmx
-$ sudo systemctl start wasmx
+sudo systemctl enable wasmx
+sudo systemctl start wasmx
 ```
