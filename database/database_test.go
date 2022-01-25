@@ -13,9 +13,6 @@ import (
 
 	dbcfg "github.com/forbole/juno/v2/database/config"
 
-	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/suite"
 
 	"github.com/disperze/wasmx/database"
@@ -28,17 +25,9 @@ type DbTestSuite struct {
 	suite.Suite
 
 	database *database.Db
-	testData TestData
-}
-
-type TestData struct {
-	contract wasmtypes.ContractInfo
 }
 
 func (suite *DbTestSuite) SetupTest() {
-	// Setup test data
-	suite.setupTestData()
-
 	// Build the database
 	encodingConfig := config.MakeEncodingConfig()
 	databaseConfig := dbcfg.NewDatabaseConfig(
@@ -56,15 +45,15 @@ func (suite *DbTestSuite) SetupTest() {
 	db, err := database.Builder(junodb.NewContext(databaseConfig, &encodingConfig, logging.DefaultLogger()))
 	suite.Require().NoError(err)
 
-	desmosDb, ok := (db).(*database.Db)
+	wasmDb, ok := (db).(*database.Db)
 	suite.Require().True(ok)
 
 	// Delete the public schema
-	_, err = desmosDb.Sql.Exec(fmt.Sprintf(`DROP SCHEMA %s CASCADE;`, databaseConfig.Schema))
+	_, err = wasmDb.Sql.Exec(fmt.Sprintf(`DROP SCHEMA %s CASCADE;`, databaseConfig.Schema))
 	suite.Require().NoError(err)
 
 	// Re-create the schema
-	_, err = desmosDb.Sql.Exec(fmt.Sprintf(`CREATE SCHEMA %s;`, databaseConfig.Schema))
+	_, err = wasmDb.Sql.Exec(fmt.Sprintf(`CREATE SCHEMA %s;`, databaseConfig.Schema))
 	suite.Require().NoError(err)
 
 	dirPath := "schema"
@@ -80,28 +69,12 @@ func (suite *DbTestSuite) SetupTest() {
 		commentsRegExp := regexp.MustCompile(`/\*.*\*/`)
 		requests := strings.Split(string(file), ";")
 		for _, request := range requests {
-			_, err := desmosDb.Sql.Exec(commentsRegExp.ReplaceAllString(request, ""))
+			_, err := wasmDb.Sql.Exec(commentsRegExp.ReplaceAllString(request, ""))
 			suite.Require().NoError(err)
 		}
 	}
 
-	suite.database = desmosDb
-}
-
-func (suite *DbTestSuite) setupTestData() {
-	sender, _ := sdk.AccAddressFromBech32("cosmos1qpzgtwec63yhxz9hesj8ve0j3ytzhhqaqxrc5d")
-	suite.testData = TestData{
-		contract: wasmtypes.NewContractInfo(
-			2,
-			sender,
-			sender,
-			"First Contract",
-			&wasmtypes.AbsoluteTxPosition{
-				BlockHeight: 1,
-				TxIndex:     1,
-			},
-		),
-	}
+	suite.database = wasmDb
 }
 
 func TestDatabaseTestSuite(t *testing.T) {

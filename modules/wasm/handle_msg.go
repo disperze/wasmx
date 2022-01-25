@@ -144,7 +144,7 @@ func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmt
 
 			isIBC := response.IBCPortID != ""
 			isCW20 := tokenInfo != nil
-			newData := types.NewCodeData(response.CodeID, &version, &isIBC, &isCW20)
+			newData := types.NewCodeData(response.CodeID, version, isIBC, isCW20)
 			err = m.db.SetCodeData(newData)
 			if err != nil {
 				return err

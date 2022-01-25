@@ -33,9 +33,9 @@ type CodeData struct {
 // NewCodeData instance
 func NewCodeData(
 	codeID uint64,
-	version *string,
-	ibc *bool,
-	cw20 *bool,
+	version string,
+	ibc bool,
+	cw20 bool,
 ) CodeData {
-	return CodeData{codeID, version, ibc, cw20}
+	return CodeData{codeID, &version, &ibc, &cw20}
 }
