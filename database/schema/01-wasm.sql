@@ -9,7 +9,7 @@ CREATE TABLE codes
     height        BIGINT                      NOT NULL,
     ibc           BOOLEAN                     NULL,
     cw20          BOOLEAN                     NULL,
-    verified      BOOLEAN                     NOT NULL DEFAULT FALSE,
+    verified      BOOLEAN                     NOT NULL DEFAULT FALSE
 );
 
 CREATE INDEX codes_creator_index ON codes (creator);
@@ -27,7 +27,7 @@ CREATE TABLE contracts
     tx            BIGINT                      NOT NULL DEFAULT 0,
     gas           BIGINT                      NOT NULL DEFAULT 0,
     fees          BIGINT                      NOT NULL DEFAULT 0,
-    height        BIGINT                      NOT NULL, 
+    height        BIGINT                      NOT NULL
 );
 
 CREATE INDEX contracts_code_id_index ON contracts (code_id);
@@ -38,8 +38,8 @@ CREATE TABLE tokens
     address      TEXT                        NOT NULL UNIQUE PRIMARY KEY,
     name         TEXT                        NOT NULL DEFAULT '',
     symbol       TEXT                        NOT NULL DEFAULT '',
-    decimals     TINYINT                     NOT NULL DEFAULT 0,
-    supply       TEXT                        NOT NULL DEFAULT 0,
+    decimals     SMALLINT                    NOT NULL DEFAULT 0,
+    supply       TEXT                        NOT NULL DEFAULT 0
 );
 
 ALTER TABLE tokens ADD CONSTRAINT fk_contract FOREIGN KEY (address) REFERENCES contracts (address);
