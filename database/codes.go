@@ -13,21 +13,20 @@ VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`
 	return err
 }
 
-// HasCodeVersion verify if code has version.
-func (db Db) HasCodeVersion(id uint64) (bool, error) {
-	var version string
-	stmt := `SELECT version FROM codes WHERE code_id = $1`
-	row := db.Sql.QueryRow(stmt, id)
-	err := row.Scan(&version)
+// GetCodeData get code data.
+func (db Db) GetCodeData(codeID uint64) (*types.CodeData, error) {
+	var data types.CodeData
+	stmt := `SELECT version, ibc, cw20 FROM codes WHERE code_id = $1 LIMIT 1`
+	err := db.Sql.QueryRow(stmt, codeID).Scan(&data.Version, &data.IBC, &data.CW20)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	return version != "", err
+	return &data, err
 }
 
-// SetCodeVersion update code version.
-func (db Db) SetCodeVersion(id uint64, version string) error {
-	stmt := `UPDATE codes SET version=$2 WHERE code_id = $1`
-	_, err := db.Sql.Exec(stmt, id, version)
+// SetCodeData update code data.
+func (db Db) SetCodeData(data types.CodeData) error {
+	stmt := `UPDATE codes SET version=$2, ibc=$3, cw20=$4 WHERE code_id = $1`
+	_, err := db.Sql.Exec(stmt, data.CodeID, data.Version, data.IBC, data.CW20)
 	return err
 }

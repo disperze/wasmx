@@ -88,27 +88,10 @@ func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmt
 			return err
 		}
 
-		if version, err := m.db.HasCodeVersion(response.CodeID); err == nil && !version {
-			res, err := m.client.RawContractState(ctx, &wasmtypes.QueryRawContractStateRequest{
-				Address:   contractAddress,
-				QueryData: []byte("contract_info"),
-			})
-
-			version := "none"
-			if err == nil && res.Data != nil {
-				version = string(res.Data)
-			}
-
-			err = m.db.SetCodeVersion(response.CodeID, version)
-			if err != nil {
-				return err
-			}
-		}
-
 		creator, _ := sdk.AccAddressFromBech32(response.Creator)
 		admin, _ := sdk.AccAddressFromBech32(response.Admin)
 		contractInfo := wasmtypes.NewContractInfo(response.CodeID, creator, admin, response.Label, createdAt)
-		contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp, response.IBCPortID != "")
+		contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
 
 		if i == 0 {
 			err = m.db.SaveContract(contract, tx.GasUsed, feeAmount)
@@ -120,20 +103,54 @@ func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmt
 			return err
 		}
 
-		// check if it is cw20 token
-		res, err := m.client.SmartContractState(ctx, &wasmtypes.QuerySmartContractStateRequest{
-			Address:   contractAddress,
-			QueryData: []byte(`{"token_info":{}}`),
-		})
-		if err == nil {
-			var tokenInfo cw20.TokenInfo
-			err = json.Unmarshal(res.Data, &tokenInfo)
+		// Store code data
+		data, err := m.db.GetCodeData(response.CodeID)
+		if err != nil {
+			return err
+		}
+
+		// Check if cw20 token
+		var tokenInfo *cw20.TokenInfo
+		if data.Version == nil || *data.CW20 {
+			cw20Response, err := m.client.SmartContractState(ctx, &wasmtypes.QuerySmartContractStateRequest{
+				Address:   contractAddress,
+				QueryData: []byte(`{"token_info":{}}`),
+			})
 			if err == nil {
-				token := types.NewToken(contractAddress, tokenInfo.Name, tokenInfo.Symbol, tokenInfo.Decimals, tokenInfo.TotalSupply)
-				err = m.db.SaveToken(token)
-				if err != nil {
-					return err
+				var token cw20.TokenInfo
+				err = json.Unmarshal(cw20Response.Data, &token)
+				if err == nil {
+					tokenInfo = &token
 				}
+			}
+		}
+
+		if data.Version == nil {
+			res, err := m.client.RawContractState(ctx, &wasmtypes.QueryRawContractStateRequest{
+				Address:   contractAddress,
+				QueryData: []byte("contract_info"),
+			})
+
+			version := "none"
+			if err == nil && res.Data != nil {
+				version = string(res.Data)
+			}
+
+			isIBC := response.IBCPortID != ""
+			isCW20 := tokenInfo != nil
+			newData := types.NewCodeData(response.CodeID, &version, &isIBC, &isCW20)
+			err = m.db.SetCodeData(newData)
+			if err != nil {
+				return err
+			}
+		}
+
+		// Save cw20 token
+		if tokenInfo != nil {
+			token := types.NewToken(contractAddress, tokenInfo.Name, tokenInfo.Symbol, tokenInfo.Decimals, tokenInfo.TotalSupply)
+			err = m.db.SaveToken(token)
+			if err != nil {
+				return err
 			}
 		}
 	}

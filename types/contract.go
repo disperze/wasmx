@@ -9,15 +9,13 @@ type Contract struct {
 	*wasmtypes.ContractInfo
 	Address     string
 	CreatedTime string
-	Ibc         bool
 }
 
 // NewContract instance
-func NewContract(contract *wasmtypes.ContractInfo, address string, created string, ibc bool) Contract {
+func NewContract(contract *wasmtypes.ContractInfo, address string, created string) Contract {
 	return Contract{
 		ContractInfo: contract,
 		Address:      address,
 		CreatedTime:  created,
-		Ibc:          ibc,
 	}
 }
