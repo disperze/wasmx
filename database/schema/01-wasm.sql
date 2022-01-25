@@ -7,10 +7,14 @@ CREATE TABLE codes
     size          BIGINT                      NOT NULL,
     version       TEXT                        NULL,
     height        BIGINT                      NOT NULL,
-    ibc           BOOLEAN                     NULL
+    ibc           BOOLEAN                     NULL,
+    cw20          BOOLEAN                     NULL,
+    verified      BOOLEAN                     NOT NULL DEFAULT FALSE,
 );
 
 CREATE INDEX codes_creator_index ON codes (creator);
+CREATE INDEX codes_ibc_index ON codes (ibc);
+CREATE INDEX codes_cw20_index ON codes (cw20);
 
 CREATE TABLE contracts
 (
