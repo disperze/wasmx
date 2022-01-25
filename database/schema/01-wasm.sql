@@ -30,6 +30,8 @@ CREATE TABLE contracts
     height        BIGINT                      NOT NULL
 );
 
+ALTER TABLE contracts ADD CONSTRAINT fk_code FOREIGN KEY (code_id) REFERENCES codes (code_id);
+
 CREATE INDEX contracts_code_id_index ON contracts (code_id);
 CREATE INDEX contracts_creator_index ON contracts (creator);
 
