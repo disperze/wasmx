@@ -9,6 +9,6 @@ func (db Db) SaveToken(token types.Token) error {
 	stmt := `
 INSERT INTO tokens (address, name, symbol, decimals, supply) 
 VALUES ($1, $2, $3, $4, $5)`
-	_, err := db.Sql.Exec(stmt, token.Contract, token.Name, token.Symbol, token.Decimals, token.Supply)
+	_, err := db.Sql.Exec(stmt, token.Contract, token.Name, token.Symbol, token.Decimals, token.InitalSupply)
 	return err
 }

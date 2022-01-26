@@ -2,11 +2,11 @@ package types
 
 // Token type
 type Token struct {
-	Contract string
-	Name     string
-	Symbol   string
-	Decimals uint8
-	Supply   string
+	Contract     string
+	Name         string
+	Symbol       string
+	Decimals     uint8
+	InitalSupply string
 }
 
 // NewToken instance
@@ -15,7 +15,7 @@ func NewToken(
 	name string,
 	symbol string,
 	decimals uint8,
-	supply string,
+	initalSupply string,
 ) Token {
-	return Token{contract, name, symbol, decimals, supply}
+	return Token{contract, name, symbol, decimals, initalSupply}
 }

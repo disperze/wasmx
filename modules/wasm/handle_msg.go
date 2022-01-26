@@ -152,7 +152,7 @@ func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmt
 		}
 
 		// Save cw20 token
-		if tokenInfo != nil {
+		if isValidCw20Token(tokenInfo) {
 			token := types.NewToken(contractAddress, tokenInfo.Name, tokenInfo.Symbol, tokenInfo.Decimals, tokenInfo.TotalSupply)
 			err = m.db.SaveToken(token)
 			if err != nil {
@@ -224,4 +224,8 @@ func GetAllContracts(tx *juno.Tx, index int, eventType string) ([]string, error)
 	}
 
 	return contracts, nil
+}
+
+func isValidCw20Token(token *cw20.TokenInfo) bool {
+	return token != nil && token.Name != "" && token.Symbol != ""
 }
