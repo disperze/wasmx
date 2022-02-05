@@ -1,7 +1,9 @@
 package wasm
 
 import (
-	"github.com/disperze/wasmx/database"
+	"context"
+	"fmt"
+
 	"github.com/disperze/wasmx/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -9,25 +11,29 @@ import (
 	juno "github.com/forbole/juno/v2/types"
 )
 
-// HandleMsg allows to handle the different utils related to the gov module
-func HandleMsg(
-	tx *juno.Tx, index int, msg sdk.Msg, db *database.Db,
-) error {
+// HandleMsg implements modules.MessageModule
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
 
 	switch cosmosMsg := msg.(type) {
 	case *wasmtypes.MsgStoreCode:
-		return handleMsgStoreCode(tx, index, cosmosMsg, db)
+		return m.handleMsgStoreCode(tx, index, cosmosMsg)
 	case *wasmtypes.MsgInstantiateContract:
-		return handleMsgInstantiateContract(tx, index, cosmosMsg, db)
+		return m.handleMsgInstantiateContract(tx, index, cosmosMsg)
+	case *wasmtypes.MsgMigrateContract:
+		return m.handleMsgMigrateContract(tx, index, cosmosMsg)
+	case *wasmtypes.MsgClearAdmin:
+		return m.handleMsgClearAdmin(tx, index, cosmosMsg)
+	case *wasmtypes.MsgUpdateAdmin:
+		return m.handleMsgUpdateAdmin(tx, index, cosmosMsg)
 	}
 
 	return nil
 }
 
-func handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode, db *database.Db) error {
+func (m *Module) handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode) error {
 	event, err := tx.FindEventByType(index, wasmtypes.EventTypeStoreCode)
 	if err != nil {
 		return err
@@ -40,29 +46,76 @@ func handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode, db 
 
 	code := types.NewCode(codeID, msg.Sender, tx.Timestamp, tx.Height)
 
-	return db.SaveCode(code)
+	return m.db.SaveCode(code)
 }
 
-func handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract, db *database.Db) error {
-	event, err := tx.FindEventByType(index, wasmtypes.EventTypeInstantiate)
+func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract) error {
+	contracts, err := GetAllContracts(tx, index, wasmtypes.EventTypeInstantiate)
 	if err != nil {
 		return err
 	}
 
-	contractAddress, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyContractAddr)
-	if err != nil {
-		return err
+	if len(contracts) == 0 {
+		return fmt.Errorf("No contract address found")
 	}
 
 	createdAt := &wasmtypes.AbsoluteTxPosition{
 		BlockHeight: uint64(tx.Height),
 		TxIndex:     uint64(index),
 	}
+	ctx := context.Background()
+	for _, contractAddress := range contracts {
+		response, err := m.client.ContractInfo(ctx, &wasmtypes.QueryContractInfoRequest{
+			Address: contractAddress,
+		})
+		if err != nil {
+			return err
+		}
 
-	creator, _ := sdk.AccAddressFromBech32(msg.Sender)
-	admin, _ := sdk.AccAddressFromBech32(msg.Admin)
-	contractInfo := wasmtypes.NewContractInfo(msg.CodeID, creator, admin, msg.Label, createdAt)
-	contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
+		creator, _ := sdk.AccAddressFromBech32(response.Creator)
+		var admin sdk.AccAddress
+		if response.Admin != "" {
+			admin, _ = sdk.AccAddressFromBech32(response.Admin)
+		}
 
-	return db.SaveContract(contract)
+		contractInfo := wasmtypes.NewContractInfo(response.CodeID, creator, admin, response.Label, createdAt)
+		contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
+
+		if err = m.db.SaveContract(contract); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Module) handleMsgMigrateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgMigrateContract) error {
+
+	return m.db.SaveContractCodeID(msg.Contract, msg.CodeID)
+}
+
+func (m *Module) handleMsgClearAdmin(tx *juno.Tx, index int, msg *wasmtypes.MsgClearAdmin) error {
+
+	return m.db.UpdateContractAdmin(msg.Contract, "")
+}
+
+func (m *Module) handleMsgUpdateAdmin(tx *juno.Tx, index int, msg *wasmtypes.MsgUpdateAdmin) error {
+
+	return m.db.UpdateContractAdmin(msg.Contract, msg.NewAdmin)
+}
+
+func GetAllContracts(tx *juno.Tx, index int, eventType string) ([]string, error) {
+	contracts := []string{}
+	event, err := tx.FindEventByType(index, eventType)
+	if err != nil {
+		return contracts, err
+	}
+
+	for _, attr := range event.Attributes {
+		if attr.Key == wasmtypes.AttributeKeyContractAddr {
+			contracts = append(contracts, attr.Value)
+		}
+	}
+
+	return contracts, nil
 }

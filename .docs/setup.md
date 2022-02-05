@@ -8,39 +8,39 @@ Setting up WasmX is pretty straightforward. It requires three things to be done:
 In order to install WasmX you are required to have [Go 1.16+](https://golang.org/dl/) installed on your machine. Once you have it, the first thing to do is to clone the GitHub repository. To do this you can run
 
 ```shell
-$ git clone https://github.com/disperze/wasmx.git
+git clone https://github.com/disperze/wasmx.git
 ```
 
 Then, you need to install the binary. To do this, run 
 
 ```shell
-$ make install
+make install
 ```
 
 This will put the `wasmx` binary inside your `$GOPATH/bin` folder. You should now be able to run `wasmx` to make sure it's installed: 
 
 ```shell
-$ wasmx version
+wasmx version
 ```
 
 ## Initializing the configuration
 In order to correctly parse and store the data based on your requirements, WasmX allows you to customize its behavior via a YAML file called `config.yaml`. In order to create the first instance of the `config.yaml` file you can run
 
 ```shell
-$ wasmx init
+wasmx init
 ```
 
 This will create such file inside the `~/.wasmx` folder.  
 Note that if you want to change the folder used by WasmX you can do this using the `--home` flag: 
 
 ```shell
-$ wasmx init --home /path/to/my/folder
+wasmx init --home /path/to/my/folder
 ```
 
 Once the file is created, you are required to edit it and change the different values. To do this you can run 
 
 ```shell
-$ nano ~/.wasmx/config.yaml
+nano ~/.wasmx/config.yaml
 ```
 
 For a better understanding of what each section and field refers to, please read the [config reference](https://github.com/forbole/juno/blob/v2/cosmos-stargate/.docs/config.md). 
@@ -49,20 +49,20 @@ For a better understanding of what each section and field refers to, please read
 Once the configuration file has been setup, you can run WasmX using the following command: 
 
 ```shell
-$ .wasmx parse
+wasmx parse
 ```
 
 If you are using a custom folder for the configuration file, please specify it using the `--home` flag: 
 
 
 ```shell
-$ wasmx parse --home /path/to/my/config/folder
+wasmx parse --home /path/to/my/config/folder
 ```
 
 We highly suggest you running WasmX as a system service so that it can be restarted automatically in the case it stops. To do this you can run: 
 
 ```shell
-$ sudo tee /etc/systemd/system/wasmx.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/wasmx.service > /dev/null <<EOF
 [Unit]
 Description=WasmX parser
 After=network-online.target
@@ -82,6 +82,6 @@ EOF
 Then you need to enable and start the service:
 
 ```shell
-$ sudo systemctl enable wasmx
-$ sudo systemctl start wasmx
+sudo systemctl enable wasmx
+sudo systemctl start wasmx
 ```
