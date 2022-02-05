@@ -3,9 +3,7 @@ package wasm
 import (
 	"github.com/disperze/wasmx/database"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/forbole/juno/v2/modules"
-	juno "github.com/forbole/juno/v2/types"
 )
 
 var (
@@ -28,9 +26,4 @@ func NewModule(db *database.Db) *Module {
 // Name implements modules.Module
 func (m *Module) Name() string {
 	return "wasm"
-}
-
-// HandleMsg implements modules.MessageModule
-func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
-	return HandleMsg(tx, index, msg, m.db)
 }

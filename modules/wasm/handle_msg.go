@@ -1,7 +1,6 @@
 package wasm
 
 import (
-	"github.com/disperze/wasmx/database"
 	"github.com/disperze/wasmx/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -9,25 +8,23 @@ import (
 	juno "github.com/forbole/juno/v2/types"
 )
 
-// HandleMsg allows to handle the different utils related to the gov module
-func HandleMsg(
-	tx *juno.Tx, index int, msg sdk.Msg, db *database.Db,
-) error {
+// HandleMsg implements modules.MessageModule
+func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	if len(tx.Logs) == 0 {
 		return nil
 	}
 
 	switch cosmosMsg := msg.(type) {
 	case *wasmtypes.MsgStoreCode:
-		return handleMsgStoreCode(tx, index, cosmosMsg, db)
+		return m.handleMsgStoreCode(tx, index, cosmosMsg)
 	case *wasmtypes.MsgInstantiateContract:
-		return handleMsgInstantiateContract(tx, index, cosmosMsg, db)
+		return m.handleMsgInstantiateContract(tx, index, cosmosMsg)
 	}
 
 	return nil
 }
 
-func handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode, db *database.Db) error {
+func (m *Module) handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode) error {
 	event, err := tx.FindEventByType(index, wasmtypes.EventTypeStoreCode)
 	if err != nil {
 		return err
@@ -40,10 +37,10 @@ func handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgStoreCode, db 
 
 	code := types.NewCode(codeID, msg.Sender, tx.Timestamp, tx.Height)
 
-	return db.SaveCode(code)
+	return m.db.SaveCode(code)
 }
 
-func handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract, db *database.Db) error {
+func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract) error {
 	event, err := tx.FindEventByType(index, wasmtypes.EventTypeInstantiate)
 	if err != nil {
 		return err
@@ -64,5 +61,5 @@ func handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInst
 	contractInfo := wasmtypes.NewContractInfo(msg.CodeID, creator, admin, msg.Label, createdAt)
 	contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
 
-	return db.SaveContract(contract)
+	return m.db.SaveContract(contract)
 }
