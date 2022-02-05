@@ -1,6 +1,9 @@
 package wasm
 
 import (
+	"context"
+	"fmt"
+
 	"github.com/disperze/wasmx/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
@@ -41,25 +44,57 @@ func (m *Module) handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgSt
 }
 
 func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract) error {
-	event, err := tx.FindEventByType(index, wasmtypes.EventTypeInstantiate)
+	contracts, err := GetAllContracts(tx, index, wasmtypes.EventTypeInstantiate)
 	if err != nil {
 		return err
 	}
 
-	contractAddress, err := tx.FindAttributeByKey(event, wasmtypes.AttributeKeyContractAddr)
-	if err != nil {
-		return err
+	if len(contracts) == 0 {
+		return fmt.Errorf("No contract address found")
 	}
 
 	createdAt := &wasmtypes.AbsoluteTxPosition{
 		BlockHeight: uint64(tx.Height),
 		TxIndex:     uint64(index),
 	}
+	ctx := context.Background()
+	for _, contractAddress := range contracts {
+		response, err := m.client.ContractInfo(ctx, &wasmtypes.QueryContractInfoRequest{
+			Address: contractAddress,
+		})
+		if err != nil {
+			return err
+		}
 
-	creator, _ := sdk.AccAddressFromBech32(msg.Sender)
-	admin, _ := sdk.AccAddressFromBech32(msg.Admin)
-	contractInfo := wasmtypes.NewContractInfo(msg.CodeID, creator, admin, msg.Label, createdAt)
-	contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
+		creator, _ := sdk.AccAddressFromBech32(response.Creator)
+		var admin sdk.AccAddress
+		if response.Admin != "" {
+			admin, _ = sdk.AccAddressFromBech32(response.Admin)
+		}
 
-	return m.db.SaveContract(contract)
+		contractInfo := wasmtypes.NewContractInfo(response.CodeID, creator, admin, response.Label, createdAt)
+		contract := types.NewContract(&contractInfo, contractAddress, tx.Timestamp)
+
+		if err = m.db.SaveContract(contract); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func GetAllContracts(tx *juno.Tx, index int, eventType string) ([]string, error) {
+	contracts := []string{}
+	event, err := tx.FindEventByType(index, eventType)
+	if err != nil {
+		return contracts, err
+	}
+
+	for _, attr := range event.Attributes {
+		if attr.Key == wasmtypes.AttributeKeyContractAddr {
+			contracts = append(contracts, attr.Value)
+		}
+	}
+
+	return contracts, nil
 }
