@@ -22,6 +22,12 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 		return m.handleMsgStoreCode(tx, index, cosmosMsg)
 	case *wasmtypes.MsgInstantiateContract:
 		return m.handleMsgInstantiateContract(tx, index, cosmosMsg)
+	case *wasmtypes.MsgMigrateContract:
+		return m.handleMsgMigrateContract(tx, index, cosmosMsg)
+	case *wasmtypes.MsgClearAdmin:
+		return m.handleMsgClearAdmin(tx, index, cosmosMsg)
+	case *wasmtypes.MsgUpdateAdmin:
+		return m.handleMsgUpdateAdmin(tx, index, cosmosMsg)
 	}
 
 	return nil
@@ -81,6 +87,21 @@ func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmt
 	}
 
 	return nil
+}
+
+func (m *Module) handleMsgMigrateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgMigrateContract) error {
+
+	return m.db.SaveContractCodeID(msg.Contract, msg.CodeID)
+}
+
+func (m *Module) handleMsgClearAdmin(tx *juno.Tx, index int, msg *wasmtypes.MsgClearAdmin) error {
+
+	return m.db.UpdateContractAdmin(msg.Contract, "")
+}
+
+func (m *Module) handleMsgUpdateAdmin(tx *juno.Tx, index int, msg *wasmtypes.MsgUpdateAdmin) error {
+
+	return m.db.UpdateContractAdmin(msg.Contract, msg.NewAdmin)
 }
 
 func GetAllContracts(tx *juno.Tx, index int, eventType string) ([]string, error) {
