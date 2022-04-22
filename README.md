@@ -10,3 +10,8 @@ which [GraphQL](https://graphql.org/) APIs can then be created using [Hasura](ht
 
 ## Usage
 To know how to setup and run wasmx, please refer to the [docs folder](.docs).
+
+## Example
+
+- [Save wasm codes and contract info](https://github.com/disperze/wasmx)
+- [Counter contracts executions](https://github.com/disperze/wasmx/tree/contract-tx-counter)

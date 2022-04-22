@@ -12,7 +12,7 @@ var (
 	_ modules.MessageModule = &Module{}
 )
 
-// Module represents the x/profiles module handler
+// Module represents the x/wasm module handler
 type Module struct {
 	db     *database.Db
 	client wasmtypes.QueryClient
