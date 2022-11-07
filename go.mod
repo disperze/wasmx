@@ -35,7 +35,6 @@ require (
 	github.com/cosmos/interchain-accounts v0.1.0 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
-	github.com/creachadair/taskgroup v0.3.2 // indirect
 	github.com/danieljoos/wincred v1.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f // indirect
@@ -132,4 +131,7 @@ require (
 	nhooyr.io/websocket v1.8.6 // indirect
 )
 
-replace github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+replace (
+	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
+	github.com/tendermint/tendermint => github.com/tendermint/tendermint v0.34.19
+)
