@@ -5,11 +5,11 @@ import (
 
 	"github.com/disperze/wasmx/database"
 	"github.com/disperze/wasmx/modules/wasm"
-	"github.com/forbole/juno/v2/modules/registrar"
+	"github.com/forbole/juno/v3/modules/registrar"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	junomod "github.com/forbole/juno/v2/modules"
-	junoremote "github.com/forbole/juno/v2/node/remote"
+	junomod "github.com/forbole/juno/v3/modules"
+	junoremote "github.com/forbole/juno/v3/node/remote"
 )
 
 // ModulesRegistrar represents the modules.Registrar that allows to register all custom modules

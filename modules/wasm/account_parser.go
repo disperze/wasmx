@@ -5,7 +5,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"github.com/forbole/juno/v2/modules/messages"
+	"github.com/forbole/juno/v3/modules/messages"
 )
 
 func WasmMessagesParser(_ codec.Codec, cosmosMsg sdk.Msg) ([]string, error) {

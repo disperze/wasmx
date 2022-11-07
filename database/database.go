@@ -3,9 +3,9 @@ package database
 import (
 	"fmt"
 
-	"github.com/forbole/juno/v2/database"
-	"github.com/forbole/juno/v2/database/postgresql"
-	juno "github.com/forbole/juno/v2/types"
+	"github.com/forbole/juno/v3/database"
+	"github.com/forbole/juno/v3/database/postgresql"
+	juno "github.com/forbole/juno/v3/types"
 	"github.com/jmoiron/sqlx"
 )
 

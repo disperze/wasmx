@@ -4,7 +4,7 @@ import (
 	"github.com/disperze/wasmx/database"
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
-	"github.com/forbole/juno/v2/modules"
+	"github.com/forbole/juno/v3/modules"
 )
 
 var (
