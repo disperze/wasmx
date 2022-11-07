@@ -21,7 +21,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *wasmtypes.MsgStoreCode:
 		return m.handleMsgStoreCode(tx, index, cosmosMsg)
 	case *wasmtypes.MsgInstantiateContract:
-		return m.handleMsgInstantiateContract(tx, index, cosmosMsg)
+		return m.handleMsgInstantiateContract(tx, index)
+	case *wasmtypes.MsgInstantiateContract2:
+		return m.handleMsgInstantiateContract(tx, index)
 	case *wasmtypes.MsgMigrateContract:
 		return m.handleMsgMigrateContract(tx, index, cosmosMsg)
 	case *wasmtypes.MsgClearAdmin:
@@ -49,7 +51,7 @@ func (m *Module) handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgSt
 	return m.db.SaveCode(code)
 }
 
-func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract) error {
+func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int) error {
 	contracts, err := GetAllContracts(tx, index, wasmtypes.EventTypeInstantiate)
 	if err != nil {
 		return err
