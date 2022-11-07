@@ -11,7 +11,7 @@ import (
 
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	juno "github.com/forbole/juno/v2/types"
+	juno "github.com/forbole/juno/v3/types"
 )
 
 // HandleMsg allows to handle the different utils related to the gov module
@@ -24,7 +24,9 @@ func (m *Module) HandleMsg(index int, msg sdk.Msg, tx *juno.Tx) error {
 	case *wasmtypes.MsgStoreCode:
 		return m.handleMsgStoreCode(tx, index, cosmosMsg)
 	case *wasmtypes.MsgInstantiateContract:
-		return m.handleMsgInstantiateContract(tx, index, cosmosMsg)
+		return m.handleMsgInstantiateContract(tx, index)
+	case *wasmtypes.MsgInstantiateContract2:
+		return m.handleMsgInstantiateContract(tx, index)
 	case *wasmtypes.MsgExecuteContract:
 		return m.handleMsgExecuteContract(tx, index, cosmosMsg)
 	case *wasmtypes.MsgMigrateContract:
@@ -64,7 +66,7 @@ func (m *Module) handleMsgStoreCode(tx *juno.Tx, index int, msg *wasmtypes.MsgSt
 	return m.db.SaveCode(code)
 }
 
-func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int, msg *wasmtypes.MsgInstantiateContract) error {
+func (m *Module) handleMsgInstantiateContract(tx *juno.Tx, index int) error {
 	contracts, err := GetAllContracts(tx, index, wasmtypes.EventTypeInstantiate)
 	if err != nil {
 		return err

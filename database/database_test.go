@@ -8,17 +8,15 @@ import (
 	"strings"
 	"testing"
 
-	junodb "github.com/forbole/juno/v2/database"
-	"github.com/forbole/juno/v2/logging"
+	junodb "github.com/forbole/juno/v3/database"
+	"github.com/forbole/juno/v3/logging"
 
-	dbcfg "github.com/forbole/juno/v2/database/config"
+	dbcfg "github.com/forbole/juno/v3/database/config"
 
 	"github.com/stretchr/testify/suite"
 
 	"github.com/disperze/wasmx/database"
 	"github.com/disperze/wasmx/types/config"
-
-	_ "github.com/proullon/ramsql/driver"
 )
 
 type DbTestSuite struct {
@@ -38,8 +36,10 @@ func (suite *DbTestSuite) SetupTest() {
 		"password",
 		"",
 		"public",
-		10,
-		10,
+		-1,
+		-1,
+		100000,
+		100,
 	)
 
 	db, err := database.Builder(junodb.NewContext(databaseConfig, &encodingConfig, logging.DefaultLogger()))
