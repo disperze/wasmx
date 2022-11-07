@@ -49,14 +49,14 @@ For a better understanding of what each section and field refers to, please read
 Once the configuration file has been setup, you can run WasmX using the following command: 
 
 ```shell
-wasmx parse
+wasmx start
 ```
 
 If you are using a custom folder for the configuration file, please specify it using the `--home` flag: 
 
 
 ```shell
-wasmx parse --home /path/to/my/config/folder
+wasmx start --home /path/to/my/config/folder
 ```
 
 We highly suggest you running WasmX as a system service so that it can be restarted automatically in the case it stops. To do this you can run: 
@@ -69,7 +69,7 @@ After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$GOPATH/bin/wasmx parse
+ExecStart=$GOPATH/bin/wasmx start
 Restart=always
 RestartSec=3
 LimitNOFILE=4096
