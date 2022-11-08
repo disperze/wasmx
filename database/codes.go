@@ -8,7 +8,7 @@ import (
 func (db Db) SaveCode(code types.Code) error {
 	stmt := `
 INSERT INTO codes (code_id, creator, hash, size, creation_time, height) 
-VALUES ($1, $2, $3, $4)`
+VALUES ($1, $2, $3, $4, $5, $6)`
 	_, err := db.Sql.Exec(stmt, code.CodeID, code.Creator, code.Hash, code.Size, code.CreatedTime, code.Height)
 	return err
 }
